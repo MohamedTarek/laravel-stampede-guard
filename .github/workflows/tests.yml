@@ -1,0 +1,94 @@
+name: tests
+
+on:
+  push:
+    branches: [1.x]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    name: L${{ matrix.laravel }} / PHP ${{ matrix.php }} / ${{ matrix.stability }}
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['7.2', '7.3', '7.4', '8.0', '8.1']
+        laravel: ['6', '7']
+        stability: [prefer-lowest, prefer-stable]
+        include:
+          # Floors match composer.json: array cache locks are missing or buggy before 6.18.1 / 7.0.5.
+          - laravel: '6'
+            illuminate: '^6.18.1'
+            testbench: '^4.0'
+          - laravel: '7'
+            illuminate: '^7.0.5'
+            testbench: '^5.0'
+        exclude:
+          # Laravel 6.20.45 and 7.30.7 (the last releases) fatal on PHP 8.1 while booting:
+          # Illuminate\Http\Request::offsetExists() lacks the ArrayAccess return type / #[\ReturnTypeWillChange].
+          - laravel: '6'
+            php: '8.1'
+          - laravel: '7'
+            php: '8.1'
+          # The lowest Laravel 6/7 releases (Carbon 2.0, Symfony 4.x) trip PHP 7.4 and 8.0 deprecations.
+          - laravel: '6'
+            php: '7.4'
+            stability: prefer-lowest
+          - laravel: '6'
+            php: '8.0'
+            stability: prefer-lowest
+          - laravel: '7'
+            php: '8.0'
+            stability: prefer-lowest
+    services:
+      redis:
+        image: redis:7
+        ports: ['6379:6379']
+        options: --health-cmd "redis-cli ping" --health-interval 5s --health-timeout 3s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: redis, pcntl, posix
+          coverage: none
+      - name: Allow installing framework releases that carry security advisories
+        # EOL Laravel majors have published advisories; Composer >= 2.9 refuses to
+        # install them by default. The config key differs between Composer versions.
+        run: |
+          composer config audit.block-insecure false 2>/dev/null || true
+          composer config policy.advisories.block false 2>/dev/null || true
+      - name: Install dependencies
+        run: |
+          # php-cs-fixer 3 needs PHP 7.4+ and would make the whole install unresolvable on 7.2/7.3; the lint runs in static-analysis.
+          if [ "${{ matrix.php }}" = "7.2" ] || [ "${{ matrix.php }}" = "7.3" ]; then
+            composer remove --dev friendsofphp/php-cs-fixer --no-interaction --no-update
+          fi
+          composer require "illuminate/cache:${{ matrix.illuminate }}" "illuminate/support:${{ matrix.illuminate }}" --no-interaction --no-update
+          composer require --dev "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
+          composer update --${{ matrix.stability }} --prefer-dist --no-interaction
+      - name: Run tests
+        run: vendor/bin/phpunit
+        env:
+          REDIS_HOST: 127.0.0.1
+          REDIS_PORT: 6379
+
+  static-analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          # Not 8.1: Larastan boots the Laravel 7 app, which fatals on PHP 8.1 (see the excludes above).
+          php-version: '8.0'
+          coverage: none
+      - name: Allow installing framework releases that carry security advisories
+        # EOL Laravel majors have published advisories; Composer >= 2.9 refuses to
+        # install them by default. The config key differs between Composer versions.
+        run: |
+          composer config audit.block-insecure false 2>/dev/null || true
+          composer config policy.advisories.block false 2>/dev/null || true
+      - run: composer update --prefer-dist --no-interaction
+      - run: composer analyse
+      - run: composer lint
