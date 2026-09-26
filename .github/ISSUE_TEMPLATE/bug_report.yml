@@ -1,0 +1,82 @@
+name: Bug report
+description: Something behaves differently from what the README promises.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. The fields below are what is needed to reproduce a caching
+        or concurrency problem; please fill in as many as apply.
+  - type: input
+    id: package-version
+    attributes:
+      label: Package version
+      description: Output of `composer show mohamedtarek/laravel-stampede-guard | grep versions`
+      placeholder: "3.0.0"
+    validations:
+      required: true
+  - type: input
+    id: laravel-version
+    attributes:
+      label: Laravel version
+      placeholder: "12.3.1"
+    validations:
+      required: true
+  - type: input
+    id: php-version
+    attributes:
+      label: PHP version
+      placeholder: "8.3.12"
+    validations:
+      required: true
+  - type: dropdown
+    id: store
+    attributes:
+      label: Cache store
+      options:
+        - redis
+        - memcached
+        - dynamodb
+        - database
+        - file
+        - array
+        - other (say which in the description)
+    validations:
+      required: true
+  - type: dropdown
+    id: macro
+    attributes:
+      label: Which macro
+      options:
+        - rememberWithLock
+        - rememberXFetch (refresh => queue)
+        - rememberXFetch (refresh => inline)
+        - both
+    validations:
+      required: true
+  - type: input
+    id: queue
+    attributes:
+      label: Queue connection (for queue mode)
+      placeholder: "redis, sync, database, sqs, ..."
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What you expected, what you got instead, and how many concurrent requests or workers were involved.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction
+      description: The smallest code that shows the problem. A failing PHPUnit test against the array store is ideal.
+      render: php
+    validations:
+      required: true
+  - type: textarea
+    id: events
+    attributes:
+      label: Events observed (optional)
+      description: If you logged `LockAcquired`, `EarlyRefreshScheduled`, `EarlyRefreshCompleted` or `EarlyRefreshFailed`, paste the relevant lines.
+      render: text

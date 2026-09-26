@@ -1,0 +1,50 @@
+{
+    "name": "mohamedtarek/laravel-stampede-guard",
+    "description": "Cache stampede prevention for Laravel: atomic-lock remember and XFetch probabilistic early expiration.",
+    "type": "library",
+    "license": "MIT",
+    "keywords": ["laravel", "cache", "stampede", "thundering-herd", "xfetch", "lock"],
+    "authors": [
+        { "name": "Mohamed Tarek" }
+    ],
+    "require": {
+        "php": "^7.2.5|^8.0",
+        "illuminate/bus": "^6.18.1|^7.0.5",
+        "illuminate/cache": "^6.18.1|^7.0.5",
+        "illuminate/contracts": "^6.18.1|^7.0.5",
+        "illuminate/events": "^6.18.1|^7.0.5",
+        "illuminate/queue": "^6.18.1|^7.0.5",
+        "illuminate/support": "^6.18.1|^7.0.5",
+        "opis/closure": "^3.6"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.0",
+        "nunomaduro/larastan": "^1.0",
+        "orchestra/testbench": "^4.0|^5.0",
+        "phpunit/phpunit": "^8.5|^9.5"
+    },
+    "autoload": {
+        "psr-4": { "MohamedTarek\\Stampede\\": "src/" }
+    },
+    "autoload-dev": {
+        "psr-4": { "MohamedTarek\\Stampede\\Tests\\": "tests/" }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "analyse": "phpstan analyse --memory-limit=1G",
+        "lint": "if [ -f vendor/bin/php-cs-fixer ]; then vendor/bin/php-cs-fixer fix --dry-run --diff; else echo 'php-cs-fixer not installed on this PHP'; fi",
+        "fix": "php-cs-fixer fix"
+    },
+    "extra": {
+        "laravel": {
+            "providers": ["MohamedTarek\\Stampede\\StampedeServiceProvider"]
+        },
+        "branch-alias": { "dev-1.x": "1.x-dev" }
+    },
+    "config": {
+        "sort-packages": true,
+        "audit": { "block-insecure": false }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

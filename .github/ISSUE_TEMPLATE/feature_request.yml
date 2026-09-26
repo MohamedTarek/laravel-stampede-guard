@@ -1,0 +1,35 @@
+name: Feature request
+description: Propose a change to the package's behaviour or API.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: What you are trying to do and why the current macros or options do not cover it.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed change
+      description: The option, macro or behaviour you have in mind. Sketch the call as you would like to write it.
+      render: php
+    validations:
+      required: true
+  - type: dropdown
+    id: lines
+    attributes:
+      label: Release lines it should apply to
+      description: Every change lands on `main` (3.x) first; say if it must also reach 2.x or 1.x.
+      options:
+        - 3.x only
+        - 3.x and 2.x
+        - all three lines
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Workarounds you tried, including Laravel's own `Cache::flexible()` where relevant.
