@@ -1,0 +1,15 @@
+includes:
+    - vendor/nunomaduro/larastan/extension.neon
+
+parameters:
+    level: 8
+    paths:
+        - src
+    tmpDir: build/phpstan
+    ignoreErrors:
+        # opis/closure is only installed with Laravel 8 (PHP 7.3 fallback); Laravel 9/10 never take that branch.
+        -
+            message: '#^(Instantiated class|Class|Call to method getClosure\(\) on an unknown class) Opis\\Closure\\SerializableClosure( not found)?\.$#'
+            path: src/Support/ClosureSerializer.php
+            count: 3
+            reportUnmatched: false

@@ -1,0 +1,102 @@
+name: tests
+
+on:
+  push:
+    branches: [2.x]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    name: L${{ matrix.laravel }} / PHP ${{ matrix.php }} / ${{ matrix.stability }}
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['7.3', '7.4', '8.0', '8.1', '8.2', '8.3']
+        laravel: ['8', '9', '10']
+        stability: [prefer-lowest, prefer-stable]
+        include:
+          - laravel: '8'
+            testbench: '^6.4'  # 6.0-6.3 still call PHPUnit's getAnnotations(), removed in PHPUnit 9.5
+          - laravel: '9'
+            testbench: '^7.0'
+          - laravel: '10'
+            testbench: '^8.0'
+        exclude:
+          - laravel: '9'
+            php: '7.3'
+          - laravel: '9'
+            php: '7.4'
+          - laravel: '10'
+            php: '7.3'
+          - laravel: '10'
+            php: '7.4'
+          - laravel: '10'
+            php: '8.0'
+          - laravel: '8'
+            php: '8.3'
+          # Laravel 8's lowest releases (Symfony 5.1, Carbon 2.31) trip PHP 8.0 deprecations and fatal on PHP 8.1+.
+          - laravel: '8'
+            php: '8.0'
+            stability: prefer-lowest
+          - laravel: '8'
+            php: '8.1'
+            stability: prefer-lowest
+          - laravel: '8'
+            php: '8.2'
+            stability: prefer-lowest
+          # Laravel 9's lowest releases pin Carbon < 2.62.1, which fatals on PHP 8.2+.
+          - laravel: '9'
+            php: '8.2'
+            stability: prefer-lowest
+          - laravel: '9'
+            php: '8.3'
+            stability: prefer-lowest
+    services:
+      redis:
+        image: redis:7
+        ports: ['6379:6379']
+        options: --health-cmd "redis-cli ping" --health-interval 5s --health-timeout 3s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: redis, pcntl, posix
+          coverage: none
+      - name: Allow installing framework releases that carry security advisories
+        # EOL Laravel majors have published advisories; Composer >= 2.9 refuses to
+        # install them by default. The config key differs between Composer versions.
+        run: |
+          composer config audit.block-insecure false 2>/dev/null || true
+          composer config policy.advisories.block false 2>/dev/null || true
+      - name: Install dependencies
+        run: |
+          # Pint needs PHP 8.1+ and would make the whole install unresolvable on 7.3-8.0; the lint runs in static-analysis.
+          composer remove --dev laravel/pint --no-interaction --no-update
+          composer require "illuminate/cache:^${{ matrix.laravel }}.0" "illuminate/support:^${{ matrix.laravel }}.0" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
+          composer update --${{ matrix.stability }} --prefer-dist --no-interaction
+      - name: Run tests
+        run: vendor/bin/phpunit
+        env:
+          REDIS_HOST: 127.0.0.1
+          REDIS_PORT: 6379
+
+  static-analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+      - name: Allow installing framework releases that carry security advisories
+        # EOL Laravel majors have published advisories; Composer >= 2.9 refuses to
+        # install them by default. The config key differs between Composer versions.
+        run: |
+          composer config audit.block-insecure false 2>/dev/null || true
+          composer config policy.advisories.block false 2>/dev/null || true
+      - run: composer update --prefer-dist --no-interaction
+      - run: composer analyse
+      - run: composer lint
