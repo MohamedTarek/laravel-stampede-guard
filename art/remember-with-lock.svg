@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="440" viewBox="0 0 960 440" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrowGreen" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#15803d"/>
+    </marker>
+    <marker id="arrowGrey" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#6b7280"/>
+    </marker>
+    <marker id="arrowBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2563eb"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="960" height="440" rx="12" fill="#ffffff" stroke="#e5e7eb"/>
+
+  <text x="32" y="44" font-size="22" font-weight="700" fill="#111827">rememberWithLock: one computes, the rest wait</text>
+  <text x="32" y="70" font-size="14" fill="#4b5563">The first worker to see the miss takes an atomic lock. Everyone else blocks briefly, then reads the value it wrote.</text>
+
+  <!-- requests column -->
+  <g font-size="13" fill="#374151">
+    <text x="60" y="130" font-weight="600" fill="#111827">N requests hit the miss</text>
+    <rect x="60" y="145" width="110" height="28" rx="6" fill="#f3f4f6" stroke="#9ca3af"/><text x="115" y="164" text-anchor="middle">request 1</text>
+    <rect x="60" y="185" width="110" height="28" rx="6" fill="#f3f4f6" stroke="#9ca3af"/><text x="115" y="204" text-anchor="middle">request 2</text>
+    <rect x="60" y="225" width="110" height="28" rx="6" fill="#f3f4f6" stroke="#9ca3af"/><text x="115" y="244" text-anchor="middle">request 3</text>
+    <rect x="60" y="265" width="110" height="28" rx="6" fill="#f3f4f6" stroke="#9ca3af"/><text x="115" y="284" text-anchor="middle">request N</text>
+  </g>
+
+  <!-- lock box -->
+  <rect x="290" y="130" width="200" height="180" rx="10" fill="#ecfdf5" stroke="#15803d" stroke-width="2"/>
+  <text x="390" y="158" font-size="14" font-weight="700" fill="#14532d" text-anchor="middle">atomic lock</text>
+  <text x="390" y="178" font-size="12" fill="#166534" text-anchor="middle" font-family="Menlo, Consolas, monospace">stampede:lock:{key}</text>
+  <text x="390" y="212" font-size="13" fill="#14532d" text-anchor="middle">request 1 acquires it</text>
+  <text x="390" y="232" font-size="13" fill="#14532d" text-anchor="middle">and runs the callback once</text>
+  <text x="390" y="266" font-size="13" fill="#166534" text-anchor="middle">requests 2..N block on it</text>
+  <text x="390" y="286" font-size="12" fill="#166534" text-anchor="middle">(up to wait_seconds, default 5)</text>
+
+  <!-- arrows requests -> lock -->
+  <g stroke="#15803d" stroke-width="2" fill="none">
+    <line x1="172" y1="159" x2="288" y2="159" marker-end="url(#arrowGreen)"/>
+  </g>
+  <g stroke="#9ca3af" stroke-width="2" fill="none" stroke-dasharray="5 4">
+    <line x1="172" y1="199" x2="288" y2="199" marker-end="url(#arrowGrey)"/>
+    <line x1="172" y1="239" x2="288" y2="239" marker-end="url(#arrowGrey)"/>
+    <line x1="172" y1="279" x2="288" y2="279" marker-end="url(#arrowGrey)"/>
+  </g>
+
+  <!-- database -->
+  <g transform="translate(560 140)">
+    <ellipse cx="70" cy="12" rx="70" ry="12" fill="#dbeafe" stroke="#2563eb"/>
+    <rect x="0" y="12" width="140" height="50" fill="#dbeafe" stroke="#2563eb"/>
+    <ellipse cx="70" cy="62" rx="70" ry="12" fill="#dbeafe" stroke="#2563eb"/>
+    <text x="70" y="44" font-size="14" font-weight="700" fill="#1e3a8a" text-anchor="middle">database</text>
+    <text x="70" y="60" font-size="12" fill="#1e3a8a" text-anchor="middle">exactly 1 query</text>
+  </g>
+  <line x1="492" y1="180" x2="558" y2="180" stroke="#2563eb" stroke-width="2" marker-end="url(#arrowBlue)"/>
+
+  <!-- cache -->
+  <rect x="560" y="240" width="140" height="60" rx="10" fill="#dbeafe" stroke="#2563eb"/>
+  <text x="630" y="264" font-size="14" font-weight="700" fill="#1e3a8a" text-anchor="middle">cache</text>
+  <text x="630" y="284" font-size="12" fill="#1e3a8a" text-anchor="middle">written once</text>
+  <line x1="630" y1="216" x2="630" y2="238" stroke="#2563eb" stroke-width="2" marker-end="url(#arrowBlue)"/>
+
+  <!-- release and double check -->
+  <rect x="740" y="130" width="190" height="170" rx="10" fill="#f9fafb" stroke="#d1d5db"/>
+  <text x="835" y="156" font-size="13" font-weight="700" fill="#111827" text-anchor="middle">then</text>
+  <text x="835" y="182" font-size="12" fill="#374151" text-anchor="middle">1. lock released (finally)</text>
+  <text x="835" y="204" font-size="12" fill="#374151" text-anchor="middle">2. waiters wake up</text>
+  <text x="835" y="226" font-size="12" fill="#374151" text-anchor="middle">3. each re-reads the key</text>
+  <text x="835" y="248" font-size="12" fill="#374151" text-anchor="middle">(double-checked locking)</text>
+  <text x="835" y="270" font-size="12" fill="#374151" text-anchor="middle">4. hit: no recompute</text>
+  <line x1="702" y1="270" x2="738" y2="270" stroke="#2563eb" stroke-width="2" marker-end="url(#arrowBlue)"/>
+
+  <!-- footer -->
+  <g font-size="13" fill="#374151">
+    <text x="60" y="350" font-weight="600" fill="#111827">Guarantees</text>
+    <text x="60" y="372">Cold key: the callback runs exactly once, whatever the concurrency. Cached 0, false, [] and '' count as hits.</text>
+    <text x="60" y="394">Callback throws: nothing is cached and the lock is released. Timeout: throw, or compute unlocked if configured.</text>
+  </g>
+  <text x="32" y="422" font-size="12" fill="#6b7280">Measured in this package's test suite: 50 concurrent workers, 1 computation.</text>
+</svg>
