@@ -27,9 +27,13 @@ class WarmKeyLatencyTest extends RedisTestCase
     use ForksWorkers;
 
     const READERS = 8;
+
     const DURATION = 12;      // seconds each reader keeps reading
+
     const TTL = 3;            // seconds; the run crosses expiry about four times
+
     const COMPUTE_MS = 300;   // callback cost
+
     const PAUSE_US = 15000;   // pause between reads per reader (~65 reads/s each)
 
     protected function getEnvironmentSetUp($app)
