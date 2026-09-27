@@ -64,6 +64,11 @@ database `1` and flush it before every test, so do not point them at a Redis you
 The concurrency suite forks 50 worker processes and asserts the callback ran exactly once
 per strategy. It is the proof behind the numbers in the README, so please keep it passing.
 
+`tests/Benchmark/` holds the warm-key latency benchmark. It is not in any default suite
+and CI does not run it; run it by hand with `vendor/bin/phpunit tests/Benchmark` when you
+change anything on the XFetch refresh path, and update the README table if the numbers
+move.
+
 ## Release lines
 
 Three branches are maintained in parallel and must stay behaviourally identical:
