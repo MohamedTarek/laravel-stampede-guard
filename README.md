@@ -18,6 +18,9 @@ around the recompute so a cold key is computed exactly once. `Cache::rememberXFe
 refreshes a hot key *before* it expires, probabilistically and in the background, so no
 reader ever sees a miss after the first fill. Works from Laravel 6 to Laravel 13.
 
+The design, the lock handoff to a queued job, and the measurements are written up in
+[Cache stampedes in Laravel: why a lock isn't enough](https://medium.com/@mt.elafifi/cache-stampedes-in-laravel-why-a-lock-isnt-enough-2111080ad4fc).
+
 ## The problem
 
 A cache stampede (also called a thundering herd or dogpile) happens when a cached value
