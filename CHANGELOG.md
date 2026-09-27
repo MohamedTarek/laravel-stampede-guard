@@ -16,6 +16,32 @@ Three lines are maintained in parallel and receive the same fixes:
 
 Nothing yet.
 
+## [3.0.1] - 2026-09-27
+
+Documentation and repository housekeeping only; no code changes.
+
+### Changed
+
+- README restructured: hero and badges, the concurrency proof and the strategy comparison
+  moved above the fold, usage before configuration, and the compatibility table under
+  Installation.
+- README diagrams (`art/*.svg`) are now served through jsDelivr so they render on Packagist.
+- `CHANGELOG.md` rewritten in Keep a Changelog format.
+
+### Added
+
+- `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`, issue forms and a pull request
+  template.
+- Three explanatory diagrams: the stampede, `rememberWithLock`, `rememberXFetch`.
+
+## [2.0.1] - 2026-09-27
+
+Same documentation and housekeeping changes as 3.0.1, on the `2.x` line. No code changes.
+
+## [1.0.1] - 2026-09-27
+
+Same documentation and housekeeping changes as 3.0.1, on the `1.x` line. No code changes.
+
 ## [3.0.0] - 2026-09-27
 
 First release of the `3.x` line, for Laravel 11, 12 and 13 on PHP 8.2 to 8.5.
@@ -75,7 +101,10 @@ First release of the `1.x` line, for Laravel 6 and 7 on PHP 7.2.5 to 8.0.
 - Static analysis at PHPStan level 5 via Larastan 1 and style via PHP CS Fixer.
 - CI matrix over PHP 7.2 to 8.0 and Laravel 6 to 7. Laravel 6 and 7 do not boot on PHP 8.1.
 
-[Unreleased]: https://github.com/MohamedTarek/laravel-stampede-guard/compare/3.0.0...main
+[Unreleased]: https://github.com/MohamedTarek/laravel-stampede-guard/compare/3.0.1...main
+[3.0.1]: https://github.com/MohamedTarek/laravel-stampede-guard/releases/tag/3.0.1
+[2.0.1]: https://github.com/MohamedTarek/laravel-stampede-guard/releases/tag/2.0.1
+[1.0.1]: https://github.com/MohamedTarek/laravel-stampede-guard/releases/tag/1.0.1
 [3.0.0]: https://github.com/MohamedTarek/laravel-stampede-guard/releases/tag/3.0.0
 [2.0.0]: https://github.com/MohamedTarek/laravel-stampede-guard/releases/tag/2.0.0
 [1.0.0]: https://github.com/MohamedTarek/laravel-stampede-guard/releases/tag/1.0.0
