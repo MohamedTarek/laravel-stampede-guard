@@ -46,6 +46,24 @@ counter. Results from a real run:
 The same suite runs on every CI leg: 97 tests across Laravel 6 to 13, unit tests on the
 array store, integration tests on Redis, and the fork proof above.
 
+The cold-key test proves the callback runs once. The latency claim for a warm key is
+measured separately by `tests/Benchmark/WarmKeyLatencyTest.php`: 8 reader processes call
+the strategy in a loop for 12 seconds while a 3-second TTL expires four times, with a
+300 ms callback and, for queue mode, a real `queue:work` process on Redis. Every read's
+latency is recorded.
+
+| Strategy                          | Reads | p50     | p99     | Worst read | Reads that waited for a recompute |
+|:----------------------------------|------:|--------:|--------:|-----------:|----------------------------------:|
+| `rememberWithLock`                | 4,303 | 0.86 ms | 2.91 ms |  2,015 ms  |                                24 |
+| `rememberXFetch`, inline refresh  | 5,625 | 0.99 ms | 2.38 ms |    309 ms  |                                 7 |
+| `rememberXFetch`, queued refresh  | 5,761 | 0.96 ms | 2.02 ms |     55 ms  |                                 0 |
+
+Under the mutex, every reader that arrives during a recompute waits for it, so each
+expiry stalls a handful of requests. Inline XFetch stalls exactly one request per
+refresh, the volunteer. Queued XFetch stalls none: the worker pays. Run it yourself with
+`vendor/bin/phpunit tests/Benchmark` (needs Redis, `pcntl` and `posix`; it is not part
+of the default suites).
+
 ## Two strategies
 
 | | `rememberWithLock` | `rememberXFetch` |

@@ -14,7 +14,12 @@ Three lines are maintained in parallel and receive the same fixes:
 
 ## [Unreleased]
 
-Nothing yet.
+### Added
+
+- `tests/Benchmark/WarmKeyLatencyTest.php`: a manual warm-key latency benchmark (8
+  readers, 12 s, four expiries, 300 ms callback, real Redis queue worker) and its results
+  in the README, so the "readers never wait" claim of `rememberXFetch` is measured, not
+  asserted.
 
 ## [3.0.1] - 2026-09-27
 
