@@ -21,6 +21,13 @@ Three lines are maintained in parallel and receive the same fixes:
   in the README, so the "readers never wait" claim of `rememberXFetch` is measured, not
   asserted.
 
+### Fixed
+
+- README "Store support": the `database` store has locks from Laravel 7.26 and the `file`
+  store from Laravel 8.15, not from 7.0 and 8.0 as listed. The section now also covers the
+  `cache_locks` table, which `php artisan cache:table` only creates from Laravel 8.53, with
+  the migration to add on older versions.
+
 ## [3.0.1] - 2026-09-27
 
 Documentation and repository housekeeping only; no code changes.
