@@ -308,12 +308,43 @@ Support by store and Laravel version:
 | `memcached` | Every supported Laravel version |
 | `dynamodb`  | Every supported Laravel version |
 | `array`     | Every supported Laravel version |
-| `database`  | Laravel 7                       |
-| `file`      | Laravel 8                       |
+| `database`  | Laravel 7.26                    |
+| `file`      | Laravel 8.15                    |
 
 Any other store, or `database`/`file` on an older Laravel version than the one listed,
-throws `MohamedTarek\Stampede\Exceptions\UnsupportedStoreException` naming the store class
-and, where relevant, the Laravel version that added lock support to it.
+throws `MohamedTarek\Stampede\Exceptions\UnsupportedStoreException` naming the store class.
+
+The `database` store keeps its locks in a separate `cache_locks` table. Laravel 11 and later
+create it in the default migrations, and `php artisan cache:table` creates it from Laravel
+8.53. On Laravel 7.26 to 8.52 the generated migration only creates the `cache` table, so
+add `cache_locks` yourself, or both macros fail with a "no such table: cache_locks" query
+error:
+
+```php
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class CreateCacheLocksTable extends Migration
+{
+    public function up()
+    {
+        Schema::create('cache_locks', function (Blueprint $table) {
+            $table->string('key')->primary();
+            $table->string('owner');
+            $table->integer('expiration');
+        });
+    }
+
+    public function down()
+    {
+        Schema::dropIfExists('cache_locks');
+    }
+}
+```
+
+The table name can be changed with the `lock_table` key of the `database` store in
+`config/cache.php`.
 
 ## Advanced configuration
 
