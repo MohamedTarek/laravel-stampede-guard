@@ -27,6 +27,10 @@ Three lines are maintained in parallel and receive the same fixes:
   store from Laravel 8.15, not from 7.0 and 8.0 as listed. The section now also covers the
   `cache_locks` table, which `php artisan cache:table` only creates from Laravel 8.53, with
   the migration to add on older versions.
+- `UnsupportedStoreException` now says the `database` store gained locks in Laravel 7.26
+  and the `file` store in 8.15, and only suggests stores that have locks on the Laravel
+  version in use. On Laravel 6 and 7 it used to suggest `database` and `file`, which throw
+  the same exception there.
 
 ## [3.0.1] - 2026-09-27
 
