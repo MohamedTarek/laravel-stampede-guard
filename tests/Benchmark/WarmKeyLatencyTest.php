@@ -162,8 +162,16 @@ class WarmKeyLatencyTest extends RedisTestCase
     {
         $out = sprintf(
             "\nWarm key, %d readers, %ds, ttl %ds, callback %dms\n%-32s %8s %9s %9s %9s %12s\n",
-            self::READERS, self::DURATION, self::TTL, self::COMPUTE_MS,
-            'strategy', 'reads', 'p50 ms', 'p99 ms', 'max ms', 'waited>=240ms'
+            self::READERS,
+            self::DURATION,
+            self::TTL,
+            self::COMPUTE_MS,
+            'strategy',
+            'reads',
+            'p50 ms',
+            'p99 ms',
+            'max ms',
+            'waited>=240ms'
         );
         foreach ($results as $name => $r) {
             $out .= sprintf("%-32s %8d %9.2f %9.2f %9.2f %12d\n", $name, $r['reads'], $r['p50'], $r['p99'], $r['max'], $r['slow']);
