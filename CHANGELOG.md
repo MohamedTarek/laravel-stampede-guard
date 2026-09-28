@@ -14,6 +14,8 @@ Three lines are maintained in parallel and receive the same fixes:
 
 ## [Unreleased]
 
+## [3.0.2] - 2026-09-29
+
 ### Added
 
 - `tests/Benchmark/WarmKeyLatencyTest.php`: a manual warm-key latency benchmark (8
@@ -31,6 +33,16 @@ Three lines are maintained in parallel and receive the same fixes:
   and the `file` store in 8.15, and only suggests stores that have locks on the Laravel
   version in use. On Laravel 6 and 7 it used to suggest `database` and `file`, which throw
   the same exception there.
+
+## [2.0.2] - 2026-09-29
+
+Same changes as 3.0.2, on the `2.x` line. Here `UnsupportedStoreException` works out the
+suggested stores at runtime, because the `file` store gained locks within Laravel 8.
+
+## [1.0.2] - 2026-09-29
+
+Same changes as 3.0.2, on the `1.x` line. Here `UnsupportedStoreException` works out the
+suggested stores at runtime, because the `database` store gained locks within Laravel 7.
 
 ## [3.0.1] - 2026-09-27
 
@@ -117,7 +129,10 @@ First release of the `1.x` line, for Laravel 6 and 7 on PHP 7.2.5 to 8.0.
 - Static analysis at PHPStan level 5 via Larastan 1 and style via PHP CS Fixer.
 - CI matrix over PHP 7.2 to 8.0 and Laravel 6 to 7. Laravel 6 and 7 do not boot on PHP 8.1.
 
-[Unreleased]: https://github.com/MohamedTarek/laravel-stampede-guard/compare/3.0.1...main
+[Unreleased]: https://github.com/MohamedTarek/laravel-stampede-guard/compare/3.0.2...main
+[3.0.2]: https://github.com/MohamedTarek/laravel-stampede-guard/releases/tag/3.0.2
+[2.0.2]: https://github.com/MohamedTarek/laravel-stampede-guard/releases/tag/2.0.2
+[1.0.2]: https://github.com/MohamedTarek/laravel-stampede-guard/releases/tag/1.0.2
 [3.0.1]: https://github.com/MohamedTarek/laravel-stampede-guard/releases/tag/3.0.1
 [2.0.1]: https://github.com/MohamedTarek/laravel-stampede-guard/releases/tag/2.0.1
 [1.0.1]: https://github.com/MohamedTarek/laravel-stampede-guard/releases/tag/1.0.1
