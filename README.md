@@ -46,7 +46,7 @@ counter. Results from a real run:
 | `rememberWithLock`                       |                                        1 |
 | `rememberXFetch` (cold start)            |                                        1 |
 
-The same suite runs on every CI leg: 97 tests across Laravel 6 to 13, unit tests on the
+The same suite runs on every CI leg: 98 tests across Laravel 6 to 13, unit tests on the
 array store, integration tests on Redis, and the fork proof above.
 
 The cold-key test proves the callback runs once. The latency claim for a warm key is
